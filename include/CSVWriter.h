@@ -7,10 +7,13 @@
 #include <array>
 #include <fstream>
 
+using ListOfWords = std::vector<std::pair<std::string, std::array<float, 2>>>;
+
 class CSVWriter {
+
 public:
-    static void writeToFile(const std::string& fileName, 
-                           const std::vector<std::pair<std::string, std::array<float, 2>>>& sortedWordStats);
+    static void writeToFile(const std::string& fileName,
+                           const ListOfWords& sortedWordStats);
 };
 
 #endif

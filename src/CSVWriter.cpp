@@ -1,7 +1,7 @@
 #include "CSVWriter.h"
 
 void CSVWriter::writeToFile(const std::string& fileName, 
-                           const std::vector<std::pair<std::string, std::array<float, 2>>>& sortedWordStats) {
+                           const ListOfWords& sortedWordStats) {
     std::ofstream file(fileName);
     if (!file.is_open()) {
         return;

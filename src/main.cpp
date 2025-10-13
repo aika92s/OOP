@@ -10,11 +10,11 @@ int main(int argc, char* argv[]) {
     
     FileRead inFileList(argv[1]);
     WordCounter wordCounter;
-    wordCounter.setString(inFileList);
-    wordCounter.splitAndCount();
+    wordCounter.setList(inFileList);
+    wordCounter.Count();
     
-    auto sortedWordStats = wordCounter.getSortedWordStats();
-    CSVWriter::writeToFile(argv[2], sortedWordStats);
+    auto sortedWordList = wordCounter.getSortedWordList();
+    CSVWriter::writeToFile(argv[2], sortedWordList);
     
     return 0;
 }
