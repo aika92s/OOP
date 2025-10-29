@@ -2,17 +2,17 @@
 #include <cctype>
 #include <algorithm>
 
-void WordCounter::setList(FileRead &wordList) {
-    list = wordList.getList();
+void WordCounter::addWord(const std::string& word) {
+	wordFreq_[word][0]++;
 }
 
-void WordCounter::Count() {
+void WordCounter::CountProcentFreq() {
     float totalCount = 0.0f;
-    for (const auto& pair : list) {
+    for (const auto& pair : wordFreq_) {
         totalCount += pair.second[0];
     }  
     
-    for (auto& pair : list) {
+    for (auto& pair : wordFreq_) {
         if (totalCount > 0) {
             pair.second[1] = (pair.second[0] / totalCount) * 100.0f;
         } else {
@@ -20,17 +20,16 @@ void WordCounter::Count() {
         }
     }
 }
-
 ListOfWords WordCounter::getSortedWordList() const {
-    ListOfWords sortedVector(list.begin(), list.end());
+    ListOfWords sortedWords(wordFreq_.begin(), wordFreq_.end());
     
-    std::sort(sortedVector.begin(), sortedVector.end(), 
+    std::sort(sortedWords.begin(), sortedWords.end(),
         [](const auto& a, const auto& b) {
             if (a.second[0] != b.second[0]) {
                 return a.second[0] > b.second[0];
             }
-            return a.first > b.first;
+            return a.first < b.first;
         });
     
-    return sortedVector;
+    return sortedWords;
 }
