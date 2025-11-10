@@ -22,9 +22,6 @@ endif()
 file(GLOB SOURCES "src/*.cpp")
 file(GLOB HEADERS "include/*.h")
 
-list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/BitArrayTests.cpp")
-list(REMOVE_ITEM SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/tests.cpp")
-
 add_executable(bit_array ${SOURCES} ${HEADERS})
 
 target_include_directories(bit_array PRIVATE include)
@@ -37,8 +34,8 @@ CXX_STANDARD_REQUIRED ON
 
 add_executable(bitarray_tests
 src/BitArray.cpp
-src/BitArrayTests.cpp
-src/tests.cpp
+tests/BitArrayTests.cpp
+tests/tests.cpp
 include/BitArray.h
 )
 

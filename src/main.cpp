@@ -9,7 +9,6 @@ int main() {
     array.set(2, false);
     std::cout << "After changing bits 5 and 2 to the false value: " << array.to_string() << std::endl;
 
-    // 3. Проверка размера и состояния
     std::cout << "Size of array: " << array.size() << std::endl;
     std::cout << "Sum of bits: " << array.count() << std::endl;
 

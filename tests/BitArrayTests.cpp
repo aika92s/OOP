@@ -12,7 +12,6 @@ protected:
     }
 };
 
-// Test constructors and basic operations
 TEST(BitArrayTest, DefaultConstructor) {
     BitArray ba;
     EXPECT_EQ(ba.size(), 0);
@@ -43,7 +42,6 @@ TEST(BitArrayTest, CopyConstructor) {
     EXPECT_EQ(copy[5], true);
 }
 
-// Test assignment operator
 TEST(BitArrayTest, AssignmentOperator) {
     BitArray original(8);
     original.set(3, true);
@@ -68,7 +66,7 @@ TEST(BitArrayTest, SetAndResetIndividualBits) {
     EXPECT_EQ(ba[3], false);
     EXPECT_EQ(ba.to_string(), "00000000");
 
-    ba.set(3);  // Default to true
+    ba.set(3);
     EXPECT_EQ(ba[3], true);
     EXPECT_EQ(ba.to_string(), "00010000");
 }
@@ -273,10 +271,9 @@ TEST(BitArrayTest, SizeAndEmpty) {
     EXPECT_TRUE(empty.empty());
 }
 
-// Test edge cases with blocks
 TEST(BitArrayTest, PartialLastBlock) {
-    BitArray ba(12);  // Fits in one block, but not full
-    ba.set(11, true);  // Set bit in partial block
+    BitArray ba(12);
+    ba.set(11, true);
 
     EXPECT_EQ(ba[11], true);
     EXPECT_EQ(ba.to_string(), "100000000000");
@@ -303,7 +300,6 @@ TEST(BitArrayTest, Resize) {
     EXPECT_EQ(ba.to_string(), "10");
 }
 
-// Test exception handling
 TEST(BitArrayTest, BitwiseOperationsDifferentSizesException) {
     BitArray ba1(8);
     BitArray ba2(4);
@@ -324,12 +320,11 @@ TEST(BitArrayTest, LargeBitArray) {
     EXPECT_EQ(ba[50], true);
     EXPECT_EQ(ba[99], true);
 
-    // Count should be 3
     EXPECT_EQ(ba.count(), 3);
 
     // Test shifting
     ba <<= 10;
     EXPECT_EQ(ba[10], true);
     EXPECT_EQ(ba[60], true);
-    EXPECT_EQ(ba[99], false);  // was shifted out
+    EXPECT_EQ(ba[99], false);
 }
