@@ -192,7 +192,6 @@ BitArray BitArray::operator~() const {
 size_t BitArray::count() const {
 	if (num_bits_ == 0) return 0;
 	size_t total = 0;
-	unsigned long long block = BlockType(0);
 
 	for (size_t i = 0; i < blocks_.size() - 1; i++) {
        for (size_t n = 0; n < BlockSize; n++) {
@@ -313,8 +312,6 @@ BitArray BitArray::operator>>(size_t n) const {
 
 bool BitArray::operator==(const BitArray &b) const {
 	if (num_bits_ != b.num_bits_) return false;
-
-    size_t num_of_blocks = (num_bits_ + (BlockSize - 1)) / BlockSize;
 
 	for (size_t i = 0; i < blocks_.size(); i++) {
 		if (blocks_[i] != b.blocks_[i]) return false;
