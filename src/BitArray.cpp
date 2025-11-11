@@ -224,7 +224,7 @@ std::string BitArray::to_string() const {
 	std::string string_bit_array;
 
 	for (size_t i = 0; i < num_bits_; i++) {
-		bool bit = blocks_[static_cast<size_t>(i / BlockSize)] & (BlockType(1) << (i % BlockSize));
+		bool bit = blocks_[(i / BlockSize)] & (BlockType(1) << (i % BlockSize));
 		if (bit) {
 			string_bit_array += '1';
 		} else {
@@ -245,7 +245,7 @@ BitArray& BitArray::operator<<=(size_t n) {
 	}
 
 	size_t shift_bits = n % BlockSize;
-	size_t shift_blocks = static_cast<size_t>(n / BlockSize);
+	size_t shift_blocks = (n / BlockSize);
 
 	if (shift_blocks != 0) {
 		for (size_t i = blocks_.size() - 1; i >= shift_blocks; i--) {
@@ -278,7 +278,7 @@ BitArray& BitArray::operator>>=(size_t n) {
 	}
 
 	size_t shift_bits = n % BlockSize;
-	size_t shift_blocks = static_cast<size_t>(n / BlockSize);
+	size_t shift_blocks = (n / BlockSize);
 
 	if (shift_blocks != 0) {
 		for (size_t i = 0; i < blocks_.size() - shift_blocks; i--) {
@@ -376,23 +376,34 @@ BitArray BitArray::operator^(const BitArray &b) const  {
 
 	size_t common_num_bits = std::min(num_bits_, b.num_bits_);
 	size_t common_num_of_blocks = (common_num_bits + (BlockSize - 1)) / BlockSize;
+	size_t common_residual_bits = common_num_bits % BlockSize;
 
 	for (size_t i = 0; i < common_num_of_blocks; i++) {
 		result.blocks_[i] = blocks_[i] ^ b.blocks_[i];
 	}
 
-	const BitArray& bigger_array = (blocks_.size() >= b.blocks_.size()) ? *this : b;
+	const BitArray& bigger_array = (num_bits_ >= b.num_bits_) ? *this : b;
 
-	if (blocks_.size() != b.blocks_.size()) {
-        std::copy(
-            bigger_array.blocks_.begin() + common_num_of_blocks,
-            bigger_array.blocks_.end(),
-            result.blocks_.begin() + common_num_of_blocks
-        );
-    }
+	if (num_bits_ != b.num_bits_) {
+
+		if (common_residual_bits > 0) {
+			size_t last_block_index = common_num_of_blocks - 1;
+
+			BlockType residual_mask = ~((BlockType(1) << common_residual_bits) - 1);
+
+			BlockType bigger_residual_bits = bigger_array.blocks_[last_block_index] & residual_mask;
+
+			result.blocks_[last_block_index] = (result.blocks_[last_block_index] & ~residual_mask) | bigger_residual_bits;
+		}
+
+		std::copy(
+			bigger_array.blocks_.begin() + common_num_of_blocks,
+			bigger_array.blocks_.end(),
+			result.blocks_.begin() + common_num_of_blocks
+		);
+	}
 	return result;
-};
-
+}
 bool BitArray::operator[](size_t i) const {
 	size_t block_index = i / BlockSize;
     size_t bit_position = i % BlockSize;

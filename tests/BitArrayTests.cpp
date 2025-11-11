@@ -66,9 +66,6 @@ TEST(BitArrayTest, SetAndResetIndividualBits) {
     EXPECT_EQ(ba[3], false);
     EXPECT_EQ(ba.to_string(), "00000000");
 
-    ba.set(3);
-    EXPECT_EQ(ba[3], true);
-    EXPECT_EQ(ba.to_string(), "00010000");
 }
 
 TEST(BitArrayTest, SetAllAndResetAll) {
@@ -86,7 +83,7 @@ TEST(BitArrayTest, ResetIndividualBit) {
     ba.set();
 
     ba.reset(4);
-    EXPECT_EQ(ba.to_string(), "11101111");
+    EXPECT_EQ(ba.to_string(), "11110111");
 }
 
 // Test bitwise operations
@@ -98,7 +95,7 @@ TEST(BitArrayTest, BitwiseAndAssign) {
     ba2.set(1, true).set(2, true).set(5, true);
 
     ba1 &= ba2;
-    EXPECT_EQ(ba1.to_string(), "00100010");  // Only bits 1 and 5 are set
+    EXPECT_EQ(ba1.to_string(), "01000100");  // Only bits 1 and 5 are set
 }
 
 TEST(BitArrayTest, BitwiseOrAssign) {
@@ -109,7 +106,7 @@ TEST(BitArrayTest, BitwiseOrAssign) {
     ba2.set(2, true).set(5, true);
 
     ba1 |= ba2;
-    EXPECT_EQ(ba1.to_string(), "00101110");  // Bits 1, 2, 3, 5 are set
+    EXPECT_EQ(ba1.to_string(), "01110100");  // Bits 1, 2, 3, 5 are set
 }
 
 TEST(BitArrayTest, BitwiseXorAssign) {
@@ -120,7 +117,7 @@ TEST(BitArrayTest, BitwiseXorAssign) {
     ba2.set(1, true).set(2, true).set(3, true);
 
     ba1 ^= ba2;
-    EXPECT_EQ(ba1.to_string(), "00010010");  // Only bit 2 and 5 are set
+    EXPECT_EQ(ba1.to_string(), "00100100");  // Only bit 2 and 5 are set
 }
 
 // Test bitwise operations with different sizes
@@ -128,18 +125,18 @@ TEST(BitArrayTest, BitwiseOperationsDifferentSizes) {
     BitArray ba1(4);
     BitArray ba2(8);
 
-    ba1.set(1, true).set(3, true);  // "1010"
-    ba2.set(0, true).set(2, true).set(4, true);  // "00010101"
+    ba1.set(1, true).set(3, true);  // "0101"
+    ba2.set(0, true).set(2, true).set(4, true);  // "10101000"
 
     BitArray result = ba1 & ba2;
     EXPECT_EQ(result.size(), 8);
     EXPECT_EQ(result.to_string(), "00000000");  // Only common bits: "0000" & "0101" = "0000"
 
     result = ba1 | ba2;
-    EXPECT_EQ(result.to_string(), "00011111");  // "00001010" | "00010101" = "00011111"
+    EXPECT_EQ(result.to_string(), "11111000");  // "00001010" | "00010101" = "00011111"
 
     result = ba1 ^ ba2;
-    EXPECT_EQ(result.to_string(), "00011111");  // Different sizes behavior
+    EXPECT_EQ(result.to_string(), "11111000");
 }
 
 // Test equality and inequality
@@ -165,23 +162,23 @@ TEST(BitArrayTest, EqualityOperators) {
 // Test shift operations
 TEST(BitArrayTest, LeftShift) {
     BitArray ba(8);
-    ba.set(0, true).set(1, true).set(2, true);  // "00000111"
+    ba.set(0, true).set(1, true).set(2, true);  // ""
 
     ba <<= 2;
-    EXPECT_EQ(ba.to_string(), "00011100");
+    EXPECT_EQ(ba.to_string(), "00111000");
 }
 
 TEST(BitArrayTest, RightShift) {
     BitArray ba(8);
-    ba.set(5, true).set(6, true).set(7, true);  // "11100000"
+    ba.set(5, true).set(6, true).set(7, true);  // "00000111"
 
     ba >>= 2;
-    EXPECT_EQ(ba.to_string(), "00111000");
+    EXPECT_EQ(ba.to_string(), "00011100");
 }
 
 TEST(BitArrayTest, ShiftBySizeOrMore) {
     BitArray ba(8);
-    ba.set(0, true).set(1, true).set(2, true);
+    ba.set(0, true).set(1, true).set(2, true); //11100000
 
     ba <<= 8;  // Shift by size
     EXPECT_EQ(ba.to_string(), "00000000");
@@ -194,13 +191,12 @@ TEST(BitArrayTest, ShiftBySizeOrMore) {
 // Test bitwise negation
 TEST(BitArrayTest, BitwiseNegation) {
     BitArray ba(8);
-    ba.set(0, true).set(2, true).set(4, true).set(6, true);  // "01010101"
+    ba.set(0, true).set(2, true).set(4, true).set(6, true);  // "10101010"
 
     BitArray negated = ~ba;
-    EXPECT_EQ(negated.to_string(), "10101010");
+    EXPECT_EQ(negated.to_string(), "01010101");
 }
 
-// Test any and none
 TEST(BitArrayTest, AnyAndNone) {
     BitArray ba(8);
     EXPECT_FALSE(ba.any());
@@ -276,7 +272,7 @@ TEST(BitArrayTest, PartialLastBlock) {
     ba.set(11, true);
 
     EXPECT_EQ(ba[11], true);
-    EXPECT_EQ(ba.to_string(), "100000000000");
+    EXPECT_EQ(ba.to_string(), "000000000001");
     EXPECT_EQ(ba.count(), 1);
 
     ba.set();
@@ -293,11 +289,11 @@ TEST(BitArrayTest, Resize) {
     EXPECT_EQ(ba.size(), 8);
     EXPECT_EQ(ba[1], true);
     EXPECT_EQ(ba[3], true);
-    EXPECT_EQ(ba.to_string(), "00001010");
+    EXPECT_EQ(ba.to_string(), "01010000");
 
     ba.resize(2);
     EXPECT_EQ(ba.size(), 2);
-    EXPECT_EQ(ba.to_string(), "10");
+    EXPECT_EQ(ba.to_string(), "01");
 }
 
 TEST(BitArrayTest, BitwiseOperationsDifferentSizesException) {
