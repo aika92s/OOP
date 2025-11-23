@@ -34,3 +34,8 @@ void Cell::toggleFlag() {
     if (is_revealed_) return;
     is_flagged_ = !(is_flagged_);
 }
+
+void Cell::resetState() {
+    is_flagged_ = false;
+    is_revealed_ = false;
+}

@@ -12,10 +12,7 @@ class Board {
     int total_bombs_;
     int safe_cells_remaining_;
 
-    int getWidth() const;
-    int getHeight() const;
     void decrementSaveCell(Game &game);
-    void revealAllBombs();
     void addValueToAdjacentCells(int x, int y);
     int countAdjacentFlags(int x, int y) const;
     void expandEmpty(Game& game, int x, int y);
@@ -27,6 +24,13 @@ public:
     void flagCell(int x, int y);
     void chordCell(Game& game, int x, int y);
     bool isValid(int x, int y) const;
+    Cell &getCell(int x, int y);
+    int getWidth() const;
+    int getHeight() const;
+    void reset();
+    void revealAllBombs();
+
+    void randomlyToggleFlags();
 
     Board(int w, int h, int bombs);
 };

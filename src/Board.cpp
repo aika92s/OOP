@@ -6,12 +6,28 @@
 #include "Game.h"
 #include "GameState.h"
 
+Cell &Board::getCell(int x, int y) {
+    return grid_[y][x];
+}
+
 int Board::getWidth() const {
     return width_;
 }
 
 int Board::getHeight() const {
     return height_;
+}
+
+void Board::reset() {
+    for (int column = 0; column < height_; column++) {
+
+        for (int row = 0; row < width_; row++) {
+            grid_[column][row].resetState();
+            grid_[column][row].setContent(std::make_unique<EmptyCell>());
+        }
+    }
+    safe_cells_remaining_ = height_ * width_ - total_bombs_;
+    bomb_locations_.clear();
 }
 
 void Board::decrementSaveCell(Game &game) {
@@ -27,9 +43,32 @@ void Board::revealAllBombs() {
     }
 }
 
+void Board::randomlyToggleFlags() {
+    int numberOfToggleFlags = safe_cells_remaining_ / 4;
+    std::vector<std::pair<int, int>> potential_spots;
+    for (int x = 0; x < width_; x++) {
+        for (int y = 0; y < height_; y++) {
+            if (!grid_[y][x].isRevealed())
+                potential_spots.push_back(std::make_pair(x, y));
+        }
+    }
+
+    std::random_device random;
+    std::mt19937 generator(random());
+
+    std::shuffle(potential_spots.begin(), potential_spots.end(), generator);
+
+    for (int i = 0; i < numberOfToggleFlags; i++) {
+        int x = potential_spots[i].first;
+        int y = potential_spots[i].second;
+        grid_[y][x].toggleFlag();
+    }
+}
+
 void Board::addValueToAdjacentCells(int const x, int const y) {
     for (int x_cord = x - 1; x_cord <= x + 1; x_cord++) {
         for (int y_cord = y - 1; y_cord <= y + 1; y_cord++) {
+
             if (y_cord == y && x_cord == x) continue;
             if (!isValid(x_cord, y_cord)) continue;
             if (grid_[y_cord][x_cord].content_->isBomb()) continue;
@@ -63,6 +102,7 @@ bool Board::isSafeZone(int const x, int const y, int const click_x, int const cl
 void Board::revealAdjacentCells(Game &game, int const x, int const y) {
     for (int x_cord = x - 1; x_cord <= x + 1; x_cord++) {
         for (int y_cord = y - 1; y_cord <= y + 1; y_cord++) {
+
             if (y_cord == y && x_cord == x) continue;
             if (!isValid(x_cord, y_cord)) continue;
             if (grid_[y_cord][x_cord].isFlagged() || grid_[y_cord][x_cord].isRevealed()) continue;
@@ -82,19 +122,25 @@ void Board::populate(Game &game, int const first_click_x, int const first_click_
         }
     }
 
-    if (potential_spots.size() < total_bombs_) {
+    if (static_cast<int>(potential_spots.size()) < total_bombs_) {
         throw std::invalid_argument("Cannot populate board: total_bombs is greater than the available safe area.");
     }
 
     std::random_device random;
     std::mt19937 generator(random());
+    std::uniform_int_distribution<int> distribution(4, 8);
+    int random_value = distribution(generator);
 
     std::shuffle(potential_spots.begin(), potential_spots.end(), generator);
 
     for (int i = 0; i < total_bombs_; ++i) {
         int x = potential_spots[i].first;
         int y = potential_spots[i].second;
-        grid_[y][x].setContent(std::make_unique<BombCell>());
+
+        if (i % random_value == 0) {
+            grid_[y][x].setContent(std::make_unique<ChaosBomb>());
+        } else { grid_[y][x].setContent(std::make_unique<BombCell>()); }
+
         bomb_locations_.push_back(potential_spots[i]);
         addValueToAdjacentCells(x, y);
     }
@@ -116,6 +162,7 @@ void Board::flagCell(int const x, int const y) {
 
 void Board::chordCell(Game &game, int const x, int const y) {
     if (!grid_[y][x].isRevealed()) return;
+
     signed char value = grid_[y][x].content_->getValue();
     if (!(value > 0 && value < 9)) return;
     if (countAdjacentFlags(x, y) != value) return;

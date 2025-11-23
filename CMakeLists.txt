@@ -28,9 +28,10 @@ endif()
 file(GLOB SOURCES "src/*.cpp")
 file(GLOB HEADERS "include/*.h")
 
-add_executable(minesweeper ${SOURCES} ${HEADERS})
+add_executable(minesweeper ${SOURCES} ${HEADERS}
+        src/main.cpp)
 
-target_link_libraries(minesweeper PRIVATE ${SFML_LIBRARIES})
+target_link_libraries(minesweeper PRIVATE sfml-graphics sfml-window sfml-system)
 
 target_include_directories(minesweeper PRIVATE include)
 

@@ -7,10 +7,10 @@
 class Game {
     Board game_board_;
     GameState current_state_;
-    bool is_first_click_ = true;
     const int CELL_SIZE = 32;
     sf::Font font_;
 
+    void resetGame();
     void initializeGraphics(); //one-time setup of graphic resources required for rendering
     void displayBoard(sf::RenderWindow& window); //draws the current state of the playing field
     /*pixels to cords of grid
@@ -24,6 +24,7 @@ public:
     void run();
     void setGameState(GameState state);
     Game(int w, int h, int bombs);
+
 };
 
 

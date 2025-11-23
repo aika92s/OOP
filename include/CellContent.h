@@ -10,12 +10,12 @@ class NumberedCell final: public ICellContent {
 public:
     bool isBomb() const override { return false; }
     signed char getValue() const override {return number_; }
-    void onReveal(Game &game, Board &board, int x, int y) override;
+    void onReveal(Game &game, Board &board, int x, int y) override {}
     std::unique_ptr<ICellContent> incrementValue() override {
         number_++;
         return nullptr;
     }
-
+    ~NumberedCell() override = default;
     explicit NumberedCell(const signed char number) : number_(number) {}
 };
 
@@ -28,9 +28,9 @@ public:
     std::unique_ptr<ICellContent> incrementValue() override {return std::make_unique<NumberedCell>(1); }
 };
 
-//represents a cell with a bomb
-class BombCell final: public ICellContent {
- public:
+//represents a cell with a default bomb
+class BombCell : public ICellContent {
+public:
     bool isBomb() const override { return true; }
     signed char getValue() const override { return -1; }
     void onReveal(Game &game, Board &board, int x, int y) override {
@@ -40,6 +40,15 @@ class BombCell final: public ICellContent {
 
     std::unique_ptr<ICellContent> incrementValue() override {
         return nullptr;
+    }
+};
+
+/* represents a cell with a bomb that doesn't finish the game
+it randomly toggles flags on the board */
+class ChaosBomb final : public BombCell {
+public:
+    void onReveal(Game &game, Board &board, int x, int y) override {
+        board.randomlyToggleFlags();
     }
 };
 
