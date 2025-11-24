@@ -46,14 +46,14 @@ void Game::run() {
                 window.close();
             }
 
-            if (current_state_ == GameState::READY || current_state_ == GameState::PLAYING) {
-                if (event.type == sf::Event::MouseButtonReleased) {
-                    processMouseClick(event.mouseButton.button, event.mouseButton.x, event.mouseButton.y);
-                }
-            } else {
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
-                    resetGame();
-                }
+            bool playingCondition = current_state_ == GameState::READY || current_state_ == GameState::PLAYING;
+
+            if (playingCondition && event.type == sf::Event::MouseButtonReleased) {
+                processMouseClick(event.mouseButton.button, event.mouseButton.x, event.mouseButton.y);
+                continue;
+            }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+                resetGame();
             }
         }
 
@@ -164,10 +164,11 @@ void Game::cellColor(sf::RenderWindow& window, sf::RectangleShape &rect, const C
         }
 
         rect.setFillColor(sf::Color(220, 220, 220));
-    } else {
-        rect.setFillColor(sf::Color(150, 150, 150));
+        window.draw(rect);
+        return;
     }
 
+    rect.setFillColor(sf::Color(150, 150, 150));
     window.draw(rect);
 }
 
