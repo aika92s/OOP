@@ -17,7 +17,7 @@ class Cell {
 
 public:
     signed char getDisplayChar() const;
-    void reveal(Game& game, Board& board, int x, int y);
+    void reveal(Board& board, int x, int y);
     void toggleFlag(); //changes is_flagged to opposite value
     bool isRevealed() const { return is_revealed_; }
     bool isFlagged() const { return is_flagged_; }

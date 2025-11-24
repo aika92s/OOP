@@ -3,30 +3,39 @@
 #include <vector>
 #include <random>
 #include "Cell.h"
+#include "GameState.h"
+
 class Board {
     friend class EmptyCell;
     friend class Cell;
+    friend class GameView;
     int width_;
     int height_;
     std::vector<std::vector<Cell>> grid_;
     std::vector<std::pair<int, int>> bomb_locations_;
     int total_bombs_;
     int safe_cells_remaining_;
+    GameState current_state_ = GameState::READY;
     std::mt19937 generator_;
 
-    void decrementSaveCell(Game &game);
+    void decrementSaveCell();
     void addValueToAdjacentCells(int x, int y);
     int countAdjacentFlags(int x, int y) const;
-    void expandEmpty(Game& game, int x, int y);
+    void expandEmpty(int x, int y);
     bool isSafeZone(int x, int y, int click_x, int click_y);
-    void revealAdjacentCells(Game &game, int x, int y);
+    void revealAdjacentCells(int x, int y);
 public:
-    void populate(Game &game, int first_click_x, int first_click_y); //first click
-    void revealCell(Game& game, int x, int y);
+    void populate(int first_click_x, int first_click_y); //first click
+    void revealCell(int x, int y);
     void flagCell(int x, int y);
-    void chordCell(Game& game, int x, int y);
+    void chordCell(int x, int y);
     bool isValid(int x, int y) const;
-    Cell &getCell(int x, int y);
+
+    GameState getGameState() const;
+
+    void setGameState(GameState state);
+
+    const Cell &getCell(int x, int y) const;
     int getWidth() const;
     int getHeight() const;
     void reset();

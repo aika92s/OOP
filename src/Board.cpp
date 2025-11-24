@@ -2,10 +2,9 @@
 #include <stdexcept>
 #include "Board.h"
 #include "CellContent.h"
-#include "Game.h"
 #include "GameState.h"
 
-Cell &Board::getCell(int x, int y) {
+const Cell &Board::getCell(int x, int y) const {
     return grid_[y][x];
 }
 
@@ -27,13 +26,13 @@ void Board::reset() {
     }
     safe_cells_remaining_ = height_ * width_ - total_bombs_;
     bomb_locations_.clear();
+    current_state_ = GameState::READY;
 }
 
-void Board::decrementSaveCell(Game &game) {
+void Board::decrementSaveCell() {
     safe_cells_remaining_--;
-    if (safe_cells_remaining_ == 0) {
-        game.setGameState(GameState::WON);
-    }
+
+    if (safe_cells_remaining_ == 0) current_state_ = GameState::WON;
 }
 
 void Board::revealAllBombs() {
@@ -93,15 +92,15 @@ int Board::countAdjacentFlags(int const x, int const y) const {
     return count;
 }
 
-void Board::expandEmpty(Game &game, int const x, int const y) {
-    revealAdjacentCells(game, x, y);
+void Board::expandEmpty(int const x, int const y) {
+    revealAdjacentCells(x, y);
 }
 
 bool Board::isSafeZone(int const x, int const y, int const click_x, int const click_y) {
     return (std::abs(x - click_x) <= 1 && std::abs(y - click_y) <= 1);
 }
 
-void Board::revealAdjacentCells(Game &game, int const x, int const y) {
+void Board::revealAdjacentCells(int const x, int const y) {
     for (int x_cord = x - 1; x_cord <= x + 1; x_cord++) {
         for (int y_cord = y - 1; y_cord <= y + 1; y_cord++) {
 
@@ -109,12 +108,12 @@ void Board::revealAdjacentCells(Game &game, int const x, int const y) {
             if (!isValid(x_cord, y_cord)) continue;
             if (grid_[y_cord][x_cord].isFlagged() || grid_[y_cord][x_cord].isRevealed()) continue;
 
-            grid_[y_cord][x_cord].reveal(game, *this, x_cord, y_cord);
+            grid_[y_cord][x_cord].reveal(*this, x_cord, y_cord);
         }
     }
 }
 
-void Board::populate(Game &game, int const first_click_x, int const first_click_y) {
+void Board::populate(int const first_click_x, int const first_click_y) {
     std::vector<std::pair<int, int>> potential_spots;
 
     for (int x = 0; x < width_; x++) {
@@ -143,14 +142,15 @@ void Board::populate(Game &game, int const first_click_x, int const first_click_
         bomb_locations_.push_back(potential_spots[i]);
         addValueToAdjacentCells(x, y);
     }
-    revealCell(game, first_click_x, first_click_y);
+    setGameState(GameState::PLAYING);
+    revealCell(first_click_x, first_click_y);
 }
 
-void Board::revealCell(Game &game, int const x, int const y) {
+void Board::revealCell(int const x, int const y) {
     if (!isValid(x, y)) return;
     if (grid_[y][x].isFlagged()) return;
     if (grid_[y][x].isRevealed()) return;
-    grid_[y][x].reveal(game, *this, x, y);
+    grid_[y][x].reveal(*this, x, y);
 }
 
 void Board::flagCell(int const x, int const y) {
@@ -159,14 +159,14 @@ void Board::flagCell(int const x, int const y) {
     grid_[y][x].toggleFlag();
 }
 
-void Board::chordCell(Game &game, int const x, int const y) {
+void Board::chordCell(int const x, int const y) {
     if (!grid_[y][x].isRevealed()) return;
 
     signed char value = grid_[y][x].content_->getValue();
     if (!(value > 0 && value < 9)) return;
     if (countAdjacentFlags(x, y) != value) return;
 
-    revealAdjacentCells(game, x, y);
+    revealAdjacentCells(x, y);
 }
 
 bool Board::isValid(int const x, int const y) const {
@@ -174,6 +174,13 @@ bool Board::isValid(int const x, int const y) const {
     if (y < 0 || y >= height_) return false;
 
     return true;
+}
+
+GameState Board::getGameState() const {
+    return current_state_;
+}
+void Board::setGameState(GameState state) {
+    current_state_ = state;
 }
 
 Board::Board(int const w, int const h, int const bombs) : width_(w), height_(h),

@@ -18,16 +18,16 @@ void Cell::setContent(std::unique_ptr<ICellContent> content) {
     content_ = std::move(content);
 }
 
-void Cell::reveal(Game &game, Board &board, int x, int y) {
+void Cell::reveal(Board &board, int x, int y) {
     if (is_revealed_) return;
     if (is_flagged_) return;
 
     if (!content_->isBomb()) {
-        board.decrementSaveCell(game);
+        board.decrementSaveCell();
     }
 
     is_revealed_ = true;
-    content_->onReveal(game, board, x, y);
+    content_->onReveal(board, x, y);
 }
 
 void Cell::toggleFlag() {

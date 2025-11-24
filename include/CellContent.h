@@ -1,8 +1,8 @@
 #ifndef MINESWEEPERLAB_CELLCONTENT_H
 #define MINESWEEPERLAB_CELLCONTENT_H
 #include "Board.h"
-#include "Game.h"
 #include "ICellContent.h"
+#include "GameState.h"
 
 //represents a cell with a number
 class NumberedCell final: public ICellContent {
@@ -10,7 +10,7 @@ class NumberedCell final: public ICellContent {
 public:
     bool isBomb() const override { return false; }
     signed char getValue() const override {return number_; }
-    void onReveal(Game &game, Board &board, int x, int y) override {}
+    void onReveal(Board &board, int x, int y) override {}
     std::unique_ptr<ICellContent> incrementValue() override {
         number_++;
         return nullptr;
@@ -24,7 +24,7 @@ class EmptyCell final : public ICellContent {
 public:
     bool isBomb() const override { return false; }
     signed char getValue() const override { return 0; }
-    void onReveal(Game &game, Board &board, int x, int y) override { board.expandEmpty(game, x, y); }
+    void onReveal(Board &board, int x, int y) override { board.expandEmpty(x, y); }
     std::unique_ptr<ICellContent> incrementValue() override {return std::make_unique<NumberedCell>(1); }
 };
 
@@ -33,8 +33,8 @@ class BombCell : public ICellContent {
 public:
     bool isBomb() const override { return true; }
     signed char getValue() const override { return -1; }
-    void onReveal(Game &game, Board &board, int x, int y) override {
-        game.setGameState(GameState::LOST);
+    void onReveal(Board &board, int x, int y) override {
+        board.setGameState(GameState::LOST);
         board.revealAllBombs();
     }
 
@@ -47,7 +47,7 @@ public:
 it randomly toggles flags on the board */
 class ChaosBomb final : public BombCell {
 public:
-    void onReveal(Game &game, Board &board, int x, int y) override {
+    void onReveal(Board &board, int x, int y) override {
         board.randomlyToggleFlags();
     }
 };

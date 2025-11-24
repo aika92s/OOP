@@ -14,7 +14,6 @@ incrementValue() - if cell is empty it returns ptr to new object (cell with numb
 if cell contains bomb nothing happens
 if cell contains number it increase the value (value++)
 */
-class Game;
 class Board;
 
 class ICellContent {
@@ -23,7 +22,7 @@ public:
 
     virtual bool isBomb() const = 0;
     virtual signed char getValue() const = 0;
-    virtual void onReveal(Game &game, Board &board, int x, int y) = 0;
+    virtual void onReveal(Board &board, int x, int y) = 0;
     virtual std::unique_ptr<ICellContent> incrementValue() = 0;
 };
 
