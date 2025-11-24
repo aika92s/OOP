@@ -160,51 +160,43 @@ void Game::displayBoard(sf::RenderWindow& window) {
             rect.setOutlineColor(sf::Color(100, 100, 100));
 
             bool is_finished = (current_state_ == GameState::WON || current_state_ == GameState::LOST);
+            bool show_content = cell.isRevealed() || is_finished;
+            char display_char = cell.getDisplayChar();
 
-            if (cell.isRevealed() || is_finished) {
-                rect.setFillColor(sf::Color(220, 220, 220));
-                char display_char = cell.getDisplayChar();
+            if (show_content) {
                 if (display_char == 'B') {
                     rect.setFillColor(sf::Color::Red);
+                    window.draw(rect);
+                    continue;
                 }
+
+                rect.setFillColor(sf::Color(220, 220, 220));
             } else {
                 rect.setFillColor(sf::Color(150, 150, 150));
             }
 
             window.draw(rect);
 
-            if (cell.isRevealed() || is_finished) {
-                char display_char = cell.getDisplayChar();
-
-                if (display_char >= '1' && display_char <= '8') {
-                    sf::Text value_text;
-                    value_text.setFont(font_);
-                    value_text.setString(display_char);
-                    value_text.setCharacterSize(CELL_SIZE / 2);
-                    value_text.setFillColor(sf::Color::Blue);
-
-                    sf::FloatRect textRect = value_text.getLocalBounds();
-                    value_text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
-                    value_text.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f,
-                                           rect.getPosition().y + CELL_SIZE / 2.0f);
-
-                    window.draw(value_text);
-                }
-            } else {
-                if (cell.isFlagged()) {
-                    sf::Text flag_text;
-                    flag_text.setFont(font_);
-                    flag_text.setString("F");
-                    flag_text.setCharacterSize(CELL_SIZE / 2);
-                    flag_text.setFillColor(sf::Color::Yellow);
-
-                    sf::FloatRect textRect = flag_text.getLocalBounds();
-                    flag_text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
-                    flag_text.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f, rect.getPosition().y + CELL_SIZE / 2.0f);
-
-                    window.draw(flag_text);
-                }
+            if (!show_content && !cell.isFlagged()) {
+                continue;
             }
+
+            sf::Text text;
+            text.setFont(font_);
+            text.setString(display_char);
+            text.setCharacterSize(CELL_SIZE / 2);
+
+            if (display_char >= '1' && display_char <= '8') {
+                text.setFillColor(sf::Color::Blue);
+
+            } else text.setFillColor(sf::Color::Black);
+
+            sf::FloatRect textRect = text.getLocalBounds();
+            text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
+            text.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f,
+                                   rect.getPosition().y + CELL_SIZE / 2.0f);
+
+            window.draw(text);
         }
     }
 }

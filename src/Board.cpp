@@ -173,6 +173,7 @@ void Board::chordCell(Game &game, int const x, int const y) {
 bool Board::isValid(int const x, int const y) const {
     if (x < 0 || x >= width_) return false;
     if (y < 0 || y >= height_) return false;
+
     return true;
 }
 
