@@ -111,39 +111,35 @@ void Game::processMouseClick(sf::Mouse::Button button, int pixel_x, int pixel_y)
 }
 
 void Game::processClick(int cell_x, int cell_y, bool is_flag_mode) {
+    if (current_state_ == GameState::WON || current_state_ == GameState::LOST) return;
 
-    if (!game_board_.isValid(cell_x, cell_y)) {
+    if (!game_board_.isValid(cell_x, cell_y)) return;
+
+    if (current_state_ == GameState::READY && is_flag_mode) return;
+
+    if (current_state_ == GameState::PLAYING && is_flag_mode) {
+        game_board_.flagCell(cell_x, cell_y);
         return;
     }
 
-    if (current_state_ == GameState::READY) {
-        if (is_flag_mode) {
+    if (current_state_ == GameState::PLAYING) {
+        const Cell& cell = game_board_.getCell(cell_x, cell_y);
+
+        if (cell.isRevealed() && cell.content_->getValue() > 0) {
+            game_board_.chordCell(*this, cell_x, cell_y);
             return;
         }
-
-        try {
-            game_board_.populate(*this, cell_x, cell_y);
-
-            setGameState(GameState::PLAYING);
-        } catch (const std::exception& e) {
-            std::cerr << "Game Setup Error: " << e.what() << "\n";
-            setGameState(GameState::LOST);
-            return;
-        }
+        game_board_.revealCell(*this, cell_x, cell_y);
+        return;
     }
 
-    if (current_state_ == GameState::PLAYING) {
-        if (is_flag_mode) {
-            game_board_.flagCell(cell_x, cell_y);
-        } else {
-            const Cell& cell = game_board_.getCell(cell_x, cell_y);
+    try {
+        game_board_.populate(*this, cell_x, cell_y);
+        setGameState(GameState::PLAYING);
 
-            if (cell.isRevealed() && cell.content_->getValue() > 0) {
-                game_board_.chordCell(*this, cell_x, cell_y);
-            } else {
-                game_board_.revealCell(*this, cell_x, cell_y);
-            }
-        }
+    } catch (const std::exception& e) {
+        std::cerr << "Game Setup Error: " << e.what() << "\n";
+        setGameState(GameState::LOST);
     }
 }
 
@@ -210,7 +206,6 @@ void Game::displayBoard(sf::RenderWindow& window) {
             }
 
             cellText(window, rect, cell);
-
         }
     }
 }
