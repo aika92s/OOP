@@ -147,56 +147,69 @@ void Game::processClick(int cell_x, int cell_y, bool is_flag_mode) {
     }
 }
 
+void Game::cellColor(sf::RenderWindow& window, sf::RectangleShape &rect, const Cell& cell, const int x, const int y, const int start_offset) {
+    bool is_finished = (current_state_ == GameState::WON || current_state_ == GameState::LOST);
+    bool show_content = cell.isRevealed() || is_finished;
+    char display_char = cell.getDisplayChar();
+
+    rect.setPosition(x * CELL_SIZE + start_offset, y * CELL_SIZE + start_offset);
+    rect.setOutlineThickness(1);
+    rect.setOutlineColor(sf::Color(100, 100, 100));
+
+    if (show_content) {
+        if (display_char == 'B') {
+            rect.setFillColor(sf::Color::Red);
+            window.draw(rect);
+            return;
+        }
+
+        rect.setFillColor(sf::Color(220, 220, 220));
+    } else {
+        rect.setFillColor(sf::Color(150, 150, 150));
+    }
+
+    window.draw(rect);
+}
+
+void Game::cellText(sf::RenderWindow& window, sf::RectangleShape &rect, const Cell& cell) {
+    char display_char = cell.getDisplayChar();
+
+    sf::Text text;
+    text.setFont(font_);
+    text.setString(display_char);
+    text.setCharacterSize(CELL_SIZE / 2);
+
+    if (display_char >= '1' && display_char <= '8') {
+        text.setFillColor(sf::Color::Blue);
+
+    } else text.setFillColor(sf::Color::Black);
+
+    sf::FloatRect textRect = text.getLocalBounds();
+    text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
+    text.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f,
+                           rect.getPosition().y + CELL_SIZE / 2.0f);
+
+    window.draw(text);
+}
+
 void Game::displayBoard(sf::RenderWindow& window) {
     const int start_offset = WINDOW_MARGIN / 2;
 
     for (int y = 0; y < game_board_.getHeight(); ++y) {
         for (int x = 0; x < game_board_.getWidth(); ++x) {
-            const Cell& cell = game_board_.getCell(x, y);
-
             sf::RectangleShape rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-            rect.setPosition(x * CELL_SIZE + start_offset, y * CELL_SIZE + start_offset);
-            rect.setOutlineThickness(1);
-            rect.setOutlineColor(sf::Color(100, 100, 100));
+            const Cell& cell = game_board_.getCell(x, y);
 
             bool is_finished = (current_state_ == GameState::WON || current_state_ == GameState::LOST);
             bool show_content = cell.isRevealed() || is_finished;
-            char display_char = cell.getDisplayChar();
 
-            if (show_content) {
-                if (display_char == 'B') {
-                    rect.setFillColor(sf::Color::Red);
-                    window.draw(rect);
-                    continue;
-                }
-
-                rect.setFillColor(sf::Color(220, 220, 220));
-            } else {
-                rect.setFillColor(sf::Color(150, 150, 150));
-            }
-
-            window.draw(rect);
-
+            cellColor(window, rect, cell, x, y, start_offset);
             if (!show_content && !cell.isFlagged()) {
                 continue;
             }
 
-            sf::Text text;
-            text.setFont(font_);
-            text.setString(display_char);
-            text.setCharacterSize(CELL_SIZE / 2);
+            cellText(window, rect, cell);
 
-            if (display_char >= '1' && display_char <= '8') {
-                text.setFillColor(sf::Color::Blue);
-
-            } else text.setFillColor(sf::Color::Black);
-
-            sf::FloatRect textRect = text.getLocalBounds();
-            text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
-            text.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f,
-                                   rect.getPosition().y + CELL_SIZE / 2.0f);
-
-            window.draw(text);
         }
     }
 }

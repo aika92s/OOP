@@ -20,6 +20,10 @@ class Game {
      calls the board member function (populate, revealCell, flagCell).*/
     void processClick(int cell_x, int cell_y, bool is_flag_mode);
 
+    void cellColor(sf::RenderWindow &window, sf::RectangleShape &rect, const Cell &cell, int x, int y, int start_offset);
+
+    void cellText(sf::RenderWindow &window, sf::RectangleShape &rect, const Cell &cell);
+
 public:
     void run();
     void setGameState(GameState state);
