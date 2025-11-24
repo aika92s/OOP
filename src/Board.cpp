@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <random>
 #include <stdexcept>
 #include "Board.h"
 #include "CellContent.h"
@@ -52,17 +51,20 @@ void Board::randomlyToggleFlags() {
                 potential_spots.push_back(std::make_pair(x, y));
         }
     }
-
-    std::random_device random;
-    std::mt19937 generator(random());
-
-    std::shuffle(potential_spots.begin(), potential_spots.end(), generator);
+    std::shuffle(potential_spots.begin(), potential_spots.end(), generator_);
 
     for (int i = 0; i < numberOfToggleFlags; i++) {
         int x = potential_spots[i].first;
         int y = potential_spots[i].second;
         grid_[y][x].toggleFlag();
     }
+}
+
+int Board::getRandomValue() {
+    std::uniform_int_distribution<int> distribution(4, 8);
+    int random_value = distribution(generator_);
+
+    return random_value;
 }
 
 void Board::addValueToAdjacentCells(int const x, int const y) {
@@ -126,12 +128,9 @@ void Board::populate(Game &game, int const first_click_x, int const first_click_
         throw std::invalid_argument("Cannot populate board: total_bombs is greater than the available safe area.");
     }
 
-    std::random_device random;
-    std::mt19937 generator(random());
-    std::uniform_int_distribution<int> distribution(4, 8);
-    int random_value = distribution(generator);
+    int random_value = getRandomValue();
 
-    std::shuffle(potential_spots.begin(), potential_spots.end(), generator);
+    std::shuffle(potential_spots.begin(), potential_spots.end(), generator_);
 
     for (int i = 0; i < total_bombs_; ++i) {
         int x = potential_spots[i].first;
@@ -179,7 +178,7 @@ bool Board::isValid(int const x, int const y) const {
 
 Board::Board(int const w, int const h, int const bombs) : width_(w), height_(h),
                                                           total_bombs_(bombs),
-                                                          safe_cells_remaining_(w * h - bombs) {
+                                                          safe_cells_remaining_(w * h - bombs), generator_(std::random_device{}()) {
     grid_.resize(h);
     for (int column = 0; column < h; column++) {
         grid_[column].resize(w);

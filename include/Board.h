@@ -1,6 +1,7 @@
 #ifndef MINESWEEPERLAB_BOARD_H
 #define MINESWEEPERLAB_BOARD_H
 #include <vector>
+#include <random>
 #include "Cell.h"
 class Board {
     friend class EmptyCell;
@@ -11,6 +12,7 @@ class Board {
     std::vector<std::pair<int, int>> bomb_locations_;
     int total_bombs_;
     int safe_cells_remaining_;
+    std::mt19937 generator_;
 
     void decrementSaveCell(Game &game);
     void addValueToAdjacentCells(int x, int y);
@@ -31,6 +33,8 @@ public:
     void revealAllBombs();
 
     void randomlyToggleFlags();
+
+    int getRandomValue();
 
     Board(int w, int h, int bombs);
 };
