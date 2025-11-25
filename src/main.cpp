@@ -1,23 +1,25 @@
 #include "Game.h"
 #include <iostream>
+#include "GameDifficulty.h"
+#include "GameSettings.h"
+#include "SettingsFactory.h"
 
 int main() {
-
-    const int width = 10;
-    const int height = 10;
-    const int bombs = 15;
-
-    if (bombs >= width * height) {
-        std::cerr << "Error: Too many bombs for the selected board size.\n";
-        return 1;
+    SettingsFactory::menu();
+    int input;
+    if (!(std::cin >> input)) {
+        input = 1;
     }
+    auto mode = static_cast<GameDifficulty>(input);
 
     try {
-        Game minesweeper(width, height, bombs);
+        std::unique_ptr<IGameSettings> settings = SettingsFactory::create(mode);
+
+        Game minesweeper(*settings);
         minesweeper.run();
 
     } catch (const std::exception& e) {
-        std::cerr << "Critical Error during game execution: " << e.what() << std::endl;
+        std::cerr << "Critical Error: " << e.what() << std::endl;
         return 1;
     }
 

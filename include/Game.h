@@ -3,6 +3,7 @@
 #include "Board.h"
 #include <SFML/Graphics.hpp>
 #include "GameView.h"
+#include "IGameSettings.h"
 
 class Game {
     Board game_board_;
@@ -20,7 +21,7 @@ class Game {
     void processClick(int cell_x, int cell_y, bool is_flag_mode);
 public:
     void run();
-    Game(int w, int h, int bombs);
+    Game(const IGameSettings& settings);
 
 };
 

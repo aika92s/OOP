@@ -2,6 +2,7 @@
 #define MINESWEEPERLAB_GAMEVIEW_H
 #include <SFML/Graphics.hpp>
 #include "Board.h"
+#include "GameState.h"
 
 class GameView {
     sf::RenderWindow* window_;
@@ -20,6 +21,5 @@ public:
     int getPixel(int cell) const;
     int getCell(int pixel) const;
 };
-
 
 #endif //MINESWEEPERLAB_GAMEVIEW_H

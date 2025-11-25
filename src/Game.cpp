@@ -19,9 +19,9 @@ void Game::run() {
     }
 }
 
-Game::Game(int w, int h, int bombs) :
-    game_board_(w, h, bombs),
-    window_(sf::VideoMode(CELL_SIZE * w + WINDOW_MARGIN, h * CELL_SIZE + WINDOW_MARGIN),
+Game::Game(const IGameSettings& settings) :
+    game_board_(settings.getWidth(), settings.getHeight(), settings.getBombsCount()),
+    window_(sf::VideoMode(CELL_SIZE * settings.getWidth()+ WINDOW_MARGIN, settings.getHeight() * CELL_SIZE + WINDOW_MARGIN),
     "Minesweeper", sf::Style::Close), view_(&window_, CELL_SIZE, WINDOW_MARGIN) {}
 
 void Game::processInput() {
