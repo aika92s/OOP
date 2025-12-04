@@ -6,8 +6,6 @@
 #include <stdexcept>
 #include <utility>
 
-// --- Тесты конструкторов ---
-
 TEST(FlatHashMapTest, DefaultConstructor) {
     flat_hash_map<int, int> map;
     EXPECT_TRUE(map.empty());
@@ -88,11 +86,8 @@ TEST(FlatHashMapTest, AtMethod) {
 
     EXPECT_EQ(map.at(1), 100);
 
-    // Проверка на выброс исключения при отсутствии ключа
     EXPECT_THROW(map.at(999), std::out_of_range);
 }
-
-// --- Тесты поиска и проверки наличия ---
 
 TEST(FlatHashMapTest, FindAndContains) {
     flat_hash_map<int, int> map = { {1, 10}, {2, 20} };
@@ -110,8 +105,6 @@ TEST(FlatHashMapTest, FindAndContains) {
     EXPECT_EQ(map.count(1), 1);
     EXPECT_EQ(map.count(5), 0);
 }
-
-// --- Тесты удаления ---
 
 TEST(FlatHashMapTest, EraseByKey) {
     flat_hash_map<int, int> map = { {1, 10}, {2, 20}, {3, 30} };
@@ -163,11 +156,9 @@ TEST(FlatHashMapTest, IteratorTraversal) {
 
 TEST(FlatHashMapTest, ConstIterator) {
     const flat_hash_map<int, int> map = { {1, 10} };
-    auto it = map.begin(); // Должен вернуться const_iterator
+    auto it = map.begin();
     EXPECT_EQ(it->second, 10);
 }
-
-// --- Тесты копирования и перемещения ---
 
 TEST(FlatHashMapTest, CopyConstructor) {
     flat_hash_map<int, int> original = { {1, 1}, {2, 2} };
@@ -178,7 +169,7 @@ TEST(FlatHashMapTest, CopyConstructor) {
 
     copy.erase(1);
     EXPECT_FALSE(copy.contains(1));
-    EXPECT_TRUE(original.contains(1)); // Оригинал не должен измениться
+    EXPECT_TRUE(original.contains(1));
 }
 
 TEST(FlatHashMapTest, MoveConstructor) {
@@ -187,7 +178,7 @@ TEST(FlatHashMapTest, MoveConstructor) {
 
     EXPECT_EQ(moved.size(), 2);
     EXPECT_TRUE(moved.contains(1));
-    EXPECT_TRUE(original.empty()); // Оригинал должен стать пустым после move
+    EXPECT_TRUE(original.empty());
 }
 
 TEST(FlatHashMapTest, Swap) {
@@ -201,13 +192,10 @@ TEST(FlatHashMapTest, Swap) {
     EXPECT_TRUE(m2.contains(1));
 }
 
-// --- Специфичные тесты реализации ---
-
 TEST(FlatHashMapTest, ResizeLogic) {
     flat_hash_map<int, int> map(2);
     size_t initial_cap = map.capacity();
 
-    // Вставляем много элементов, чтобы вызвать ресайз
     for(int i = 0; i < 100; ++i) {
         map.insert({i, i});
     }
@@ -232,9 +220,9 @@ TEST(FlatHashMapTest, TombstonesReuse) {
     map.insert({1, 10});
     map.insert({2, 20});
 
-    map.erase(1); // Создаем "могильный камень" (DELETED)
+    map.erase(1); 
 
-    map.insert({3, 30}); // Должен корректно вставиться, возможно переиспользовав место
+    map.insert({3, 30}); 
 
     EXPECT_TRUE(map.contains(3));
     EXPECT_FALSE(map.contains(1));
