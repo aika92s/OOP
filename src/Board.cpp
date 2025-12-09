@@ -6,7 +6,7 @@
 #include "EmptyCell.h"
 #include "GameState.h"
 
-const Cell &Board::getCell(int x, int y) const {
+const Board::Cell &Board::getCell(int x, int y) const {
     return grid_[y][x];
 }
 
@@ -39,7 +39,7 @@ void Board::decrementSaveCell() {
 
 void Board::revealAllBombs() {
     for (auto pair : bomb_locations_) {
-        grid_[pair.second][pair.first].is_revealed_ = true;
+        grid_[pair.second][pair.first].setReveal();
     }
 }
 
@@ -74,9 +74,9 @@ void Board::addValueToAdjacentCells(int const x, int const y) {
 
             if (y_cord == y && x_cord == x) continue;
             if (!isValid(x_cord, y_cord)) continue;
-            if (grid_[y_cord][x_cord].content_->isBomb()) continue;
+            if (grid_[y_cord][x_cord].isBomb()) continue;
 
-            std::unique_ptr<ICellContent> new_content = grid_[y_cord][x_cord].content_->incrementValue();
+            std::unique_ptr<ICellContent> new_content = grid_[y_cord][x_cord].incrementValue();
             if (new_content == nullptr) continue;
             grid_[y_cord][x_cord].setContent(std::move(new_content));
         }
@@ -167,7 +167,7 @@ void Board::flagCell(int const x, int const y) {
 void Board::chordCell(int const x, int const y) {
     if (!grid_[y][x].isRevealed()) return;
 
-    signed char value = grid_[y][x].content_->getValue();
+    signed char value = grid_[y][x].getValue();
     if (!(value > 0 && value < 9)) return;
     if (countAdjacentFlags(x, y) != value) return;
 
@@ -196,4 +196,85 @@ Board::Board(int const w, int const h, int const bombs) : width_(w), height_(h),
         grid_[column].resize(w);
         for (int row = 0; row < w; row++) grid_[column][row].setContent(std::make_unique<EmptyCell>());
     }
+}
+
+std::unique_ptr<ICellContent> Board::Cell::incrementValue() {
+    std::unique_ptr<ICellContent> new_content = content_->incrementValue();
+
+    return new_content;
+}
+
+void Board::Cell::setReveal() {
+    is_revealed_ = true;
+}
+
+void Board::Cell::setContent(std::unique_ptr<ICellContent> content) {
+    content_ = std::move(content);
+}
+
+bool Board::Cell::isBomb(signed char value) const {
+    if (value == -1) return true;
+
+    return false;
+}
+
+signed char Board::Cell::getDisplayChar() const {
+
+    if (is_revealed_) {
+        const signed char value = content_->getValue();
+
+        if (value == 0) return ' ';
+
+        if (isBomb(value)) return 'B';
+
+        return '0' + value;
+    }
+
+    if (is_flagged_) return 'F';
+
+    return 'X';
+}
+
+void Board::Cell::reveal(Board &board, int x, int y) {
+    if (is_revealed_) return;
+    if (is_flagged_) return;
+
+    if (!content_->isBomb()) {
+        board.decrementSaveCell();
+    }
+
+    is_revealed_ = true;
+    content_->onReveal(board, x, y);
+}
+
+void Board::Cell::toggleFlag() {
+    if (is_revealed_) return;
+
+    is_flagged_ = !(is_flagged_);
+}
+
+bool Board::Cell::isRevealed() const {
+    return is_revealed_;
+}
+
+bool Board::Cell::isFlagged() const {
+    return is_flagged_;
+}
+
+void Board::Cell::resetState() {
+    is_flagged_ = false;
+    is_revealed_ = false;
+}
+
+bool Board::Cell::isBomb() const {
+    if (isBomb(content_->getValue())) return true;
+
+    return false;
+}
+
+signed char Board::Cell::getValue() const {
+    if (content_) {
+        return content_->getValue();
+    }
+    return 0;
 }

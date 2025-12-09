@@ -17,10 +17,13 @@ class GameView {
 public:
     GameView(sf::RenderWindow* window, const int cell_size, const int window_margin);
     void initializeGraphics();
-    void cellColor(sf::RectangleShape &rect, const Cell &cell, int x, int y, int start_offset, GameState current_state) const;
+    void cellColor(sf::RectangleShape &rect, const Board::Cell &cell, int x, int y, int start_offset, GameState current_state) const;
     bool isNumber(char display_char) const;
-    void cellText(sf::RectangleShape &rect, const Cell &cell);
-    void render(const Board& board);
+
+    bool isBomb(char display_char) const;
+
+    void cellText(sf::RectangleShape &rect, const Board::Cell &cell);
+    void render(const Board &board);
     int getPixel(int cell) const;
     int getCell(int pixel) const;
 };

@@ -69,9 +69,9 @@ void Game::processClick(int cell_x, int cell_y, bool is_flag_mode) {
     }
 
     if (currentState == GameState::PLAYING) {
-        const Cell& cell = game_board_.getCell(cell_x, cell_y);
+        const Board::Cell& cell = game_board_.getCell(cell_x, cell_y);
 
-        if (cell.isRevealed() && cell.content_->getValue() > 0) {
+        if (cell.isRevealed() && cell.getValue() > 0) {
             game_board_.chordCell(cell_x, cell_y);
             return;
         }

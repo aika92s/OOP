@@ -64,7 +64,7 @@ void GameView::initializeGraphics() {
 }
 
 
-void GameView::cellColor(sf::RectangleShape &rect, const Cell& cell, const int x, const int y, const int start_offset, GameState current_state) const {
+void GameView::cellColor(sf::RectangleShape &rect, const Board::Cell& cell, const int x, const int y, const int start_offset, GameState current_state) const {
     bool is_finished = (current_state == GameState::WON || current_state == GameState::LOST);
     bool show_content = cell.isRevealed() || is_finished;
     char display_char = cell.getDisplayChar();
@@ -74,7 +74,7 @@ void GameView::cellColor(sf::RectangleShape &rect, const Cell& cell, const int x
     rect.setOutlineColor(Colors::OutlineColor);
 
     if (show_content) {
-        if (display_char == 'B') {
+        if (isBomb(display_char)) {
 
             rect.setFillColor(sf::Color::Red);
             window_->draw(rect);
@@ -93,12 +93,14 @@ void GameView::cellColor(sf::RectangleShape &rect, const Cell& cell, const int x
 }
 
 bool GameView::isNumber(char display_char) const {
-    if (display_char >= '1' && display_char <= '8') return true;
-
-    return false;
+    return (display_char >= '1' && display_char <= '8');
 }
 
-void GameView::cellText(sf::RectangleShape &rect, const Cell& cell) {
+bool GameView::isBomb(char display_char) const {
+    return display_char == 'B';
+}
+
+void GameView::cellText(sf::RectangleShape &rect, const  Board::Cell& cell) {
     char display_char = cell.getDisplayChar();
 
     sf::Text content;
@@ -121,7 +123,7 @@ void GameView::render(const Board& board) {
         for (int x = 0; x < board.getWidth(); ++x) {
 
             sf::RectangleShape rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-            const Cell& cell = board.getCell(x, y);
+            const Board::Cell& cell = board.getCell(x, y);
 
             bool is_finished = (current_state == GameState::WON || current_state == GameState::LOST);
             bool show_content = cell.isRevealed() || is_finished;
