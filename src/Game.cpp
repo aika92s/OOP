@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <iostream>
+#include "Colors.h"
 #include "GameView.h"
 #include <SFML/Graphics.hpp>
 
@@ -12,7 +13,7 @@ void Game::run() {
 
     while (window_.isOpen()) {
         processInput();
-        window_.clear(sf::Color(240, 240, 240));
+        window_.clear(Colors::OutlineColor);
 
         view_.render(game_board_);
         window_.display();

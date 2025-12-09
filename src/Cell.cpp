@@ -1,11 +1,20 @@
 #include "Cell.h"
 #include "Board.h"
 
+bool Cell::isBomb(const signed char value) const {
+    if (value == -1) return true;
+
+    return false;
+}
+
 signed char Cell::getDisplayChar() const {
     if (is_revealed_) {
         const signed char value = content_->getValue();
+
         if (value == 0) return ' ';
-        if (value == -1) return 'B';
+
+        if (isBomb(value)) return 'B';
+
         return '0' + value;
     }
 

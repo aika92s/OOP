@@ -1,5 +1,6 @@
-#include "../include/GameView.h"
+#include "GameView.h"
 #include <iostream>
+#include "Colors.h"
 
 void GameView::overlay(GameState current_state, const Board& board) const {
     if (!(current_state == GameState::WON) && !(current_state == GameState::LOST)) return;
@@ -8,7 +9,7 @@ void GameView::overlay(GameState current_state, const Board& board) const {
     const int window_height = board.getHeight() * CELL_SIZE + WINDOW_MARGIN;
 
     sf::RectangleShape overlay(sf::Vector2f(window_width, window_height));
-    overlay.setFillColor(sf::Color(255, 255, 255, 150));
+    overlay.setFillColor(Colors::OverlayColor);
     window_->draw(overlay);
 
     sf::Text titleText;
@@ -64,7 +65,7 @@ void GameView::cellColor(sf::RectangleShape &rect, const Cell& cell, const int x
 
     rect.setPosition(x * CELL_SIZE + start_offset, y * CELL_SIZE + start_offset);
     rect.setOutlineThickness(1);
-    rect.setOutlineColor(sf::Color(100, 100, 100));
+    rect.setOutlineColor(Colors::OutlineColor);
 
     if (show_content) {
         if (display_char == 'B') {
@@ -73,13 +74,19 @@ void GameView::cellColor(sf::RectangleShape &rect, const Cell& cell, const int x
             return;
         }
 
-        rect.setFillColor(sf::Color(220, 220, 220));
+        rect.setFillColor(Colors::RevealedCellColor);
         window_->draw(rect);
         return;
     }
 
-    rect.setFillColor(sf::Color(150, 150, 150));
+    rect.setFillColor(Colors::HiddenCellColor);
     window_->draw(rect);
+}
+
+bool GameView::isNumber(char display_char) const {
+    if (display_char >= '1' && display_char <= '8') return true;
+
+    return false;
 }
 
 void GameView::cellText(sf::RectangleShape &rect, const Cell& cell) {
@@ -90,7 +97,7 @@ void GameView::cellText(sf::RectangleShape &rect, const Cell& cell) {
     text.setString(display_char);
     text.setCharacterSize(CELL_SIZE / 2);
 
-    if (display_char >= '1' && display_char <= '8') {
+    if (isNumber(display_char)) {
         text.setFillColor(sf::Color::Blue);
 
     } else text.setFillColor(sf::Color::Black);

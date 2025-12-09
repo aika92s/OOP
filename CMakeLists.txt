@@ -37,7 +37,9 @@ add_executable(minesweeper ${SOURCES} ${HEADERS}
         include/BombCell.h
         src/EmptyCell.cpp
         include/EmptyCell.h
-        src/NumberedCell.cpp)
+        src/NumberedCell.cpp
+        include/Colors.h
+)
 
 target_link_libraries(minesweeper PRIVATE sfml-graphics sfml-window sfml-system)
 

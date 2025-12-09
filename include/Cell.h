@@ -16,6 +16,8 @@ class Cell {
     void setContent(std::unique_ptr<ICellContent> content);
 
 public:
+
+    bool isBomb(signed char value) const;
     signed char getDisplayChar() const;
     void reveal(Board& board, int x, int y);
     void toggleFlag(); //changes is_flagged to opposite value
