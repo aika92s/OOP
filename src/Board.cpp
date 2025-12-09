@@ -1,7 +1,9 @@
 #include <algorithm>
 #include <stdexcept>
 #include "Board.h"
-#include "CellContent.h"
+
+#include "BombCell.h"
+#include "EmptyCell.h"
 #include "GameState.h"
 
 const Cell &Board::getCell(int x, int y) const {
@@ -137,7 +139,10 @@ void Board::populate(int const first_click_x, int const first_click_y) {
 
         if (i % random_value == 0) {
             grid_[y][x].setContent(std::make_unique<ChaosBomb>());
-        } else { grid_[y][x].setContent(std::make_unique<BombCell>()); }
+
+        } else {
+            grid_[y][x].setContent(std::make_unique<BombCell>());
+        }
 
         bomb_locations_.push_back(potential_spots[i]);
         addValueToAdjacentCells(x, y);

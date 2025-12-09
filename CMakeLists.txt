@@ -32,7 +32,12 @@ add_executable(minesweeper ${SOURCES} ${HEADERS}
         include/GameDifficulty.h
         include/GameDifficulty.h
         src/SettingsFactory.cpp
-        include/SettingsFactory.h)
+        include/SettingsFactory.h
+        src/BombCell.cpp
+        include/BombCell.h
+        src/EmptyCell.cpp
+        include/EmptyCell.h
+        src/NumberedCell.cpp)
 
 target_link_libraries(minesweeper PRIVATE sfml-graphics sfml-window sfml-system)
 
