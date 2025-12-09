@@ -2,7 +2,6 @@
 #define MINESWEEPERLAB_EMPTYCELL_H
 
 #include "Board.h"
-#include "NumberedCell.h"
 #include "ICellContent.h"
 
 //represents a cell without a bomb or number

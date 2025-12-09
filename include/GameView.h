@@ -1,7 +1,6 @@
 #ifndef MINESWEEPERLAB_GAMEVIEW_H
 #define MINESWEEPERLAB_GAMEVIEW_H
 #include <SFML/Graphics.hpp>
-#include "Colors.h"
 #include "Board.h"
 #include "GameState.h"
 

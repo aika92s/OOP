@@ -3,7 +3,6 @@
 
 #include "Board.h"
 #include "ICellContent.h"
-#include "GameState.h"
 
 //represents a cell with a default bomb
 class BombCell : public ICellContent {

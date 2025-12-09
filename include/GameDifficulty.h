@@ -1,7 +1,3 @@
-//
-// Created by aika92 on 11/25/25.
-//
-
 #ifndef MINESWEEPERLAB_GAMEDIFFICULTY_H
 #define MINESWEEPERLAB_GAMEDIFFICULTY_H
 

@@ -1,6 +1,3 @@
-//
-// Created by aika92 on 11/25/25.
-//
 #ifndef MINESWEEPERLAB_SETTINGSFACTORY_H
 #define MINESWEEPERLAB_SETTINGSFACTORY_H
 #include <memory>

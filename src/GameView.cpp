@@ -104,9 +104,9 @@ void GameView::cellText(sf::RectangleShape &rect, const Cell& cell) {
     sf::Text content;
 
     if (isNumber(display_char)) {
-        content = text(true, CELL_SIZE / 2, sf::Color::Blue, std::string(1, display_char));
+        content = text(false, CELL_SIZE / 2, sf::Color::Blue, std::string(1, display_char));
 
-    } else content = text(true, CELL_SIZE / 2, sf::Color::Black, std::string(1, display_char));
+    } else content = text(false, CELL_SIZE / 2, sf::Color::Black, std::string(1, display_char));
 
     content.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f, rect.getPosition().y + CELL_SIZE / 2.0f);
     window_->draw(content);
