@@ -2,6 +2,26 @@
 #include <iostream>
 #include "Colors.h"
 
+sf::Text GameView::text(bool bold, unsigned int size, const sf::Color& color, const std::string& str) const {
+
+    sf::Text text;
+
+    text.setFont(font_);
+    text.setCharacterSize(size);
+
+    if (bold) {
+        text.setStyle(sf::Text::Bold);
+    }
+
+    text.setFillColor(color);
+    text.setString(str);
+
+    sf::FloatRect titleRect = text.getLocalBounds();
+    text.setOrigin(titleRect.left + titleRect.width / 2.0f, titleRect.top + titleRect.height / 2.0f);
+
+    return text;
+}
+
 void GameView::overlay(GameState current_state, const Board& board) const {
     if (!(current_state == GameState::WON) && !(current_state == GameState::LOST)) return;
 
@@ -10,33 +30,19 @@ void GameView::overlay(GameState current_state, const Board& board) const {
 
     sf::RectangleShape overlay(sf::Vector2f(window_width, window_height));
     overlay.setFillColor(Colors::OverlayColor);
+
     window_->draw(overlay);
 
     sf::Text titleText;
-    titleText.setFont(font_);
-    titleText.setCharacterSize(50);
-    titleText.setStyle(sf::Text::Bold);
-
     if (current_state == GameState::WON) {
-        titleText.setFillColor(sf::Color::Green);
-        titleText.setString("YOU WON!");
+        titleText = text(true, 50, sf::Color::Green, "YOU WON!");
     } else {
-        titleText.setFillColor(sf::Color::Red);
-        titleText.setString("GAME OVER!");
+        titleText = text(true, 50, sf::Color::Red, "GAME OVER!");
     }
 
-    sf::FloatRect titleRect = titleText.getLocalBounds();
-    titleText.setOrigin(titleRect.left + titleRect.width / 2.0f, titleRect.top + titleRect.height / 2.0f);
     titleText.setPosition(window_width / 2.0f, window_height / 2.0f - 30);
 
-    sf::Text subText;
-    subText.setFont(font_);
-    subText.setCharacterSize(30);
-    subText.setFillColor(sf::Color::Black);
-    subText.setString("Press 'R' to restart");
-
-    sf::FloatRect subRect = subText.getLocalBounds();
-    subText.setOrigin(subRect.left + subRect.width / 2.0f, subRect.top + subRect.height / 2.0f);
+    sf::Text subText = text(false, 30, sf::Color::Black, "Press 'R' to restart");
     subText.setPosition(window_width / 2.0f, window_height / 2.0f + 30);
 
     window_->draw(titleText);
@@ -69,13 +75,16 @@ void GameView::cellColor(sf::RectangleShape &rect, const Cell& cell, const int x
 
     if (show_content) {
         if (display_char == 'B') {
+
             rect.setFillColor(sf::Color::Red);
             window_->draw(rect);
+
             return;
         }
 
         rect.setFillColor(Colors::RevealedCellColor);
         window_->draw(rect);
+
         return;
     }
 
@@ -92,22 +101,15 @@ bool GameView::isNumber(char display_char) const {
 void GameView::cellText(sf::RectangleShape &rect, const Cell& cell) {
     char display_char = cell.getDisplayChar();
 
-    sf::Text text;
-    text.setFont(font_);
-    text.setString(display_char);
-    text.setCharacterSize(CELL_SIZE / 2);
+    sf::Text content;
 
     if (isNumber(display_char)) {
-        text.setFillColor(sf::Color::Blue);
+        content = text(true, CELL_SIZE / 2, sf::Color::Blue, std::string(1, display_char));
 
-    } else text.setFillColor(sf::Color::Black);
+    } else content = text(true, CELL_SIZE / 2, sf::Color::Black, std::string(1, display_char));
 
-    sf::FloatRect textRect = text.getLocalBounds();
-    text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
-    text.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f,
-                     rect.getPosition().y + CELL_SIZE / 2.0f);
-
-    window_->draw(text);
+    content.setPosition(rect.getPosition().x + CELL_SIZE / 2.0f, rect.getPosition().y + CELL_SIZE / 2.0f);
+    window_->draw(content);
 }
 
 
@@ -117,6 +119,7 @@ void GameView::render(const Board& board) {
 
     for (int y = 0; y < board.getHeight(); ++y) {
         for (int x = 0; x < board.getWidth(); ++x) {
+
             sf::RectangleShape rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
             const Cell& cell = board.getCell(x, y);
 
@@ -135,10 +138,12 @@ void GameView::render(const Board& board) {
 
 int GameView::getPixel(int cell) const {
     int pixel = cell * CELL_SIZE + (WINDOW_MARGIN / 2);
+
     return pixel;
 }
 
 int GameView::getCell(int pixel) const {
     int cell = (pixel - (WINDOW_MARGIN / 2)) / CELL_SIZE;
+
     return cell;
 }

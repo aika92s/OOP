@@ -11,6 +11,8 @@ class GameView {
     const int CELL_SIZE;
     sf::Font font_;
 
+    sf::Text text(bool bold, unsigned int size, const sf::Color &color, const std::string &str) const;
+
     void overlay(GameState current_state, const Board &board) const;
 
 public:
