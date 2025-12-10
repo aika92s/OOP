@@ -1,28 +1,28 @@
 #include "SettingsFactory.h"
-#include <iostream>
-#include <unordered_map>
-#include <functional>
 #include "GameSettings.h"
+#include <iostream>
+
+SettingsFactory::SettingsFactoryType& SettingsFactory::GetInstance() {
+    static SettingsFactoryType factory;
+    static bool registered = false;
+
+    if (!registered) {
+        factory.Register(GameDifficulty::BEGINNER, []() {
+            return std::make_unique<BeginnerGameSettings>();
+        });
+        factory.Register(GameDifficulty::INTERMEDIATE, []() {
+            return std::make_unique<IntermediateGameSettings>();
+        });
+        factory.Register(GameDifficulty::EXPERT, []() {
+            return std::make_unique<ExpertGameSettings>();
+        });
+        registered = true;
+    }
+    return factory;
+}
 
 std::unique_ptr<IGameSettings> SettingsFactory::create(GameDifficulty mode) {
-    static const std::unordered_map<
-                GameDifficulty,
-                std::function<std::unique_ptr<IGameSettings>()>>
-
-    settingsCreators = {
-        { GameDifficulty::BEGINNER,     []() { return std::make_unique<BeginnerGameSettings>(); } },
-        { GameDifficulty::INTERMEDIATE, []() { return std::make_unique<IntermediateGameSettings>(); } },
-        { GameDifficulty::EXPERT,       []() { return std::make_unique<ExpertGameSettings>(); } }
-    };
-
-    auto it = settingsCreators.find(mode);
-    if (it != settingsCreators.end()) {
-        return it->second();
-    }
-
-    std::cout << "Unknown mode, defaulting to Beginner.\n";
-    return std::make_unique<BeginnerGameSettings>();
-
+    return GetInstance().CreateObject(mode);
 }
 
 void SettingsFactory::menu() {
