@@ -7,7 +7,7 @@
 class NumberedCell final: public ICellContent {
     signed char number_;
 public:
-    bool isBomb() const override { return false; }
+    CellType getType() const override { return CellType::Number; }
     signed char getValue() const override {return number_; }
     void onReveal(Board &board, int x, int y) override {}
     std::unique_ptr<ICellContent> incrementValue() override;

@@ -1,5 +1,6 @@
 #ifndef OOP_ICELLCONTENT_H
 #define OOP_ICELLCONTENT_H
+#include "CellTypes.h"
 
 /*information about the cell (content like a bomb, a number or emptiness):
 
@@ -19,8 +20,8 @@ class Board;
 class ICellContent {
 public:
     virtual ~ICellContent() = default;
-
-    virtual bool isBomb() const = 0;
+    virtual CellType getType() const = 0;
+    virtual bool isBomb() const { return getType() == CellType::Bomb || getType() == CellType::ChaosBomb; }
     virtual signed char getValue() const = 0;
     virtual void onReveal(Board &board, int x, int y) = 0;
     virtual std::unique_ptr<ICellContent> incrementValue() = 0;

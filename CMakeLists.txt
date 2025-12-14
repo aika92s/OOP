@@ -29,19 +29,7 @@ file(GLOB SOURCES "src/*.cpp")
 file(GLOB HEADERS "include/*.h")
 
 add_executable(minesweeper ${SOURCES} ${HEADERS}
-        include/GameDifficulty.h
-        include/GameDifficulty.h
-        src/SettingsFactory.cpp
-        include/SettingsFactory.h
-        src/BombCell.cpp
-        include/BombCell.h
-        src/EmptyCell.cpp
-        include/EmptyCell.h
-        src/NumberedCell.cpp
-        include/Colors.h
-        include/ObjectFactory.h
-        include/SettingsFactoryPolicies.h
-)
+        include/CellTypes.h)
 
 target_link_libraries(minesweeper PRIVATE sfml-graphics sfml-window sfml-system)
 

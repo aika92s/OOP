@@ -7,7 +7,7 @@
 //represents a cell with a default bomb
 class BombCell : public ICellContent {
 public:
-    bool isBomb() const override { return true; }
+    CellType getType() const override { return CellType::Bomb; }
     signed char getValue() const override { return -1; }
     void onReveal(Board &board, int x, int y) override;
 
@@ -19,6 +19,8 @@ it randomly toggles flags on the board */
 class ChaosBomb final : public BombCell {
 public:
     void onReveal(Board &board, int x, int y) override;
+    CellType getType() const override { return CellType::ChaosBomb; }
+
 };
 
 #endif //MINESWEEPERLAB_BOMBCELL_H
