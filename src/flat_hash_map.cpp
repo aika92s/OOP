@@ -330,8 +330,7 @@ insert(value_type &&value) {
             index = 0;
             continue;
         }
-
-        // SIMD BLOCK
+        
         __m128i chunk = _mm_loadu_si128(reinterpret_cast<const __m128i*>(&m_metadata_[index]));
 
         int mask_full = _mm_movemask_epi8(_mm_cmpeq_epi8(chunk, vec_full));
