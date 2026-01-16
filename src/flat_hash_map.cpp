@@ -266,16 +266,14 @@ std::pair<typename flat_hash_map<Key, T, Hash, KeyEqual>::iterator, bool> flat_h
             if (m_equal_(m_data_[index + bit].first, value.first)) {
                 return { iterator(this, index + bit), false };
             }
-            mask_full &= ~(1 << bit); // убираем проверенный бит
+            mask_full &= ~(1 << bit); 
         }
 
-        // Проверяем DELETED (запоминаем первый удаленный)
         int mask_deleted = _mm_movemask_epi8(_mm_cmpeq_epi8(chunk, vec_deleted));
         if (mask_deleted != 0 && first_deleted == m_capacity_) {
             first_deleted = index + count_trailing_zeros(mask_deleted);
         }
 
-        // Проверяем EMPTY (место вставки)
         int mask_empty = _mm_movemask_epi8(_mm_cmpeq_epi8(chunk, vec_empty));
         if (mask_empty != 0) {
             int bit = count_trailing_zeros(mask_empty);
@@ -287,8 +285,7 @@ std::pair<typename flat_hash_map<Key, T, Hash, KeyEqual>::iterator, bool> flat_h
             m_size_++;
             return { iterator(this, insert_index), true };
         }
-
-        // Линейный пробинг: прыгаем на 16 элементов
+        
         index += 16;
         if (index >= m_capacity_) index = 0;
     }
